@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Details | Spam Email Classifier</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="dashboard-body">
+    <!-- Ambient Background Glows -->
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+    <div class="ambient-glow glow-3"></div>
+
+    <div class="dashboard-container">
+        <!-- HEADER NAVBAR -->
+        <header class="dash-header">
+            <div class="dash-brand">
+                <div class="dash-logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        <path d="m9 12 2 2 4-4"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="dash-title">Email Analysis</h1>
+                    <div class="dash-subtitle-pill">
+                        <span>Detailed Inspection</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dash-actions">
+                <button type="button" class="btn-dash btn-theme-toggle" onclick="toggleTheme()" title="Toggle Dark/Light Mode" aria-label="Toggle Theme">
+                    <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                    <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <span class="theme-text">Light Mode</span>
+                </button>
+                <a href="{{ url_for('dashboard') }}" class="btn-dash btn-refresh">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                    <span>Back to Dashboard</span>
+                </a>
+                <a href="{{ url_for('logout') }}" class="btn-dash btn-logout">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </header>
+
+        {% if email %}
+            <div class="email-details-card" data-email-id="{{ email.id }}" data-classification="{{ email.classification }}">
+                <div class="email-detail-header">
+                    <div class="email-title-group">
+                        <div class="sender-avatar avatar-0">
+                            {{ email.sender[0] | upper if email.sender else 'E' }}
+                        </div>
+                        <div>
+                            <h2 class="detail-subject">{{ email.subject }}</h2>
+                            <div class="detail-meta">
+                                <strong>From:</strong> <span>{{ email.sender }}</span>
+                                {% if email.is_overridden %}
+                                    <span class="custom-override-pill">⚡ User Override</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-header-right">
+                        {% if email.classification == "spam" %}
+                            <div class="badge-status badge-spam badge-lg">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                                <span>CLASSIFIED AS SPAM</span>
+                            </div>
+                        {% else %}
+                            <div class="badge-status badge-safe badge-lg">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                <span>VERIFIED SAFE</span>
+                            </div>
+                        {% endif %}
+
+                        <div class="detail-actions" style="gap: 8px;">
+                            {% if email.classification == "spam" %}
+                                <button type="button" class="btn-action btn-mark-safe" onclick="markEmail('{{ email.id }}', 'ham', this)" title="Mark as Safe email">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                    <span>Mark Safe</span>
+                                </button>
+                            {% else %}
+                                <button type="button" class="btn-action btn-mark-spam" onclick="markEmail('{{ email.id }}', 'spam', this)" title="Mark as Spam">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                                    <span>Mark Spam</span>
+                                </button>
+                            {% endif %}
+                            <button type="button" class="btn-action btn-trash-email" onclick="deleteSingleEmail('{{ email.id }}', this, true)" title="Move email to Gmail Trash">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                                <span>Move to Trash</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="email-body-container">
+                    <div class="body-label">Email Content Body</div>
+                    <div class="email-body-content">{{ email.body | safe }}</div>
+                </div>
+            </div>
+        {% else %}
+            <div class="empty-state-card">
+                <h3>Email Not Found</h3>
+                <p>The requested email record could not be loaded or retrieved.</p>
+                <a href="{{ url_for('dashboard') }}" class="btn-dash btn-refresh">Return to Dashboard</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- JavaScript -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
