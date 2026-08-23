@@ -218,3 +218,54 @@ They are excluded through `.gitignore`.
 A Machine Learning and Web Development project combining:
 
 **Python + Flask + Gmail API + Machine Learning + HTML/CSS/JavaScript**
+
+
+# Custom Spam Email Classifier
+
+## About the Project
+
+The Custom Spam Email Classifier is a machine learning-based web application designed to automatically detect and classify emails as Spam or Safe (Ham).
+
+The project uses Python, Flask, Scikit-learn, Pandas, TF-IDF, and Multinomial Naive Bayes. It also integrates with the Gmail API using OAuth 2.0 authentication.
+
+## Features
+
+- Spam and Safe email classification
+- Machine learning-based detection
+- Gmail API integration
+- Google OAuth 2.0 authentication
+- Email search and filtering
+- Spam statistics dashboard
+- Spam percentage visualization
+
+## Technologies Used
+
+- Python
+- Flask
+- HTML
+- CSS
+- JavaScript
+- Pandas
+- Scikit-learn
+- Gmail API
+- OAuth 2.0
+
+## Machine Learning
+
+The system uses TF-IDF for feature extraction and Multinomial Naive Bayes for email classification.
+
+## Model Accuracy
+
+The current model achieved approximately 95.8% accuracy on the test dataset.
+
+## Security
+
+Sensitive files such as `credentials.json`, `.env`, and OAuth tokens are not included in the repository.
+
+## Future Improvements
+
+- Advanced phishing detection
+- Malicious link detection
+- Multilingual email classification
+- Improved machine learning models
+- Email risk scoring
